@@ -25,6 +25,28 @@ func gobool(b C.gboolean) bool {
 func cfree(s *C.char) { C.freeCstr(s) }
 
 //-----------------------------------------------------------------------
+// Screen
+//-----------------------------------------------------------------------
+
+type Screen struct {
+	GScreen *C.GdkScreen
+}
+
+func ScreenGetDefault() *Screen {
+	return &Screen{C.gdk_screen_get_default()}
+}
+
+func (s *Screen) GetNMonitors() int {
+	return int(C.gdk_screen_get_n_monitors(s.GScreen))
+}
+
+func (s *Screen) GetMonitorGeometry(num int) *Rectangle {
+	var rect C.GdkRectangle
+	C.gdk_screen_get_monitor_geometry(s.GScreen, C.gint(num), &rect)
+	return &Rectangle{int(rect.x), int(rect.y), int(rect.width), int(rect.height)}
+}
+
+//-----------------------------------------------------------------------
 // Types
 //-----------------------------------------------------------------------
 type Point struct {
