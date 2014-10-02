@@ -14,10 +14,10 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/mattn/go-gtk/gdk"
-	"github.com/mattn/go-gtk/gdkpixbuf"
-	"github.com/mattn/go-gtk/glib"
-	"github.com/mattn/go-gtk/pango"
+	"github.com/YouROK/go-gtk/gdk"
+	"github.com/YouROK/go-gtk/gdkpixbuf"
+	"github.com/YouROK/go-gtk/glib"
+	"github.com/YouROK/go-gtk/pango"
 )
 
 func gint(v int) C.gint           { return C.gint(v) }
@@ -1312,9 +1312,19 @@ func (v *Window) SetTypeHint(hint gdk.WindowTypeHint) {
 // gtk_window_set_frame_dimensions //deprecated since 2.24
 // gtk_window_set_has_frame  //deprecated since 2.24
 // gtk_window_set_mnemonic_modifier
-// gtk_window_set_skip_taskbar_hint
-// gtk_window_set_skip_pager_hint
 // gtk_window_set_urgency_hint
+
+func (v *Window) SetCursor(c *gdk.Cursor) {
+	C.gdk_window_set_cursor((*C.GdkWindow)(unsafe.Pointer(v.GetWindow().GWindow)), (*C.GdkCursor)(unsafe.Pointer(c.GCursor)))
+}
+
+func (v *Window) SkipTaskbarHint(setting bool) {
+	C.gtk_window_set_skip_taskbar_hint(WINDOW(v), gbool(setting))
+}
+
+func (v *Window) SkipPagerHint(setting bool) {
+	C.gtk_window_set_skip_pager_hint(WINDOW(v), gbool(setting))
+}
 
 func (v *Window) SetAcceptFocus(setting bool) {
 	C.gtk_window_set_accept_focus(WINDOW(v), gbool(setting))
@@ -8551,6 +8561,14 @@ func NewEventBox() *EventBox {
 // gboolean gtk_event_box_get_above_child (GtkEventBox *event_box);
 // void gtk_event_box_set_visible_window (GtkEventBox *event_box, gboolean visible_window);
 // gboolean gtk_event_box_get_visible_window (GtkEventBox *event_box);
+
+func (v *EventBox) SetVisibleWindow(visible bool) {
+	C.gtk_event_box_set_visible_window((*C.GtkEventBox)(unsafe.Pointer(v.GWidget)), gbool(visible))
+}
+
+func (v *EventBox) GetVisibleWindow() bool {
+	return gobool(C.gtk_event_box_get_visible_window((*C.GtkEventBox)(unsafe.Pointer(v.GWidget))))
+}
 
 //-----------------------------------------------------------------------
 // GtkHandleBox
