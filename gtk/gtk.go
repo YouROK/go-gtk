@@ -73,30 +73,31 @@ func LINK_BUTTON(p *LinkButton) *C.GtkLinkButton           { return C.toGLinkBut
 func COMBO_BOX(p *ComboBox) *C.GtkComboBox                 { return C.toGComboBox(p.GWidget) }
 func COMBO_BOX_ENTRY(p *ComboBoxEntry) *C.GtkComboBoxEntry { return C.toGComboBoxEntry(p.GWidget) }
 func MESSAGE_DIALOG(p *MessageDialog) *C.GtkMessageDialog  { return C.toGMessageDialog(p.GWidget) }
-func COMBO_BOX_TEXT(p *ComboBoxText) *C.GtkComboBoxText    { return C.toGComboBoxText(p.GWidget) }
-func ACCESSIBLE(p *Accessible) *C.GtkAccessible            { return C.toGAccessible(unsafe.Pointer(p.Object)) }
-func BIN(p *Bin) *C.GtkBin                                 { return C.toGBin(p.GWidget) }
-func STATUSBAR(p *Statusbar) *C.GtkStatusbar               { return C.toGStatusbar(p.GWidget) }
-func INFO_BAR(p *InfoBar) *C.GtkInfoBar                    { return C.toGInfoBar(p.GWidget) }
-func FRAME(p *Frame) *C.GtkFrame                           { return C.toGFrame(p.GWidget) }
-func BOX(p *Box) *C.GtkBox                                 { return C.toGBox(p.GWidget) }
-func PANED(p *Paned) *C.GtkPaned                           { return C.toGPaned(p.GWidget) }
-func TOGGLE_BUTTON(p *ToggleButton) *C.GtkToggleButton     { return C.toGToggleButton(p.GWidget) }
-func ACCEL_LABEL(p *AccelLabel) *C.GtkAccelLabel           { return C.toGAccelLabel(p.GWidget) }
-func SCALEBUTTON(p *ScaleButton) *C.GtkScaleButton         { return C.toGScaleButton(p.GWidget) }
-func STYLE(p *Style) *C.GtkStyle                           { return p.GStyle }
-func ENTRY(p *Entry) *C.GtkEntry                           { return C.toGEntry(p.GWidget) }
-func ADJUSTMENT(p *Adjustment) *C.GtkAdjustment            { return p.GAdjustment }
-func TEXT_VIEW(p *TextView) *C.GtkTextView                 { return C.toGTextView(p.GWidget) }
-func TEXT_BUFFER(p unsafe.Pointer) *C.GtkTextBuffer        { return C.toGTextBuffer(p) }
-func MENU(p *Menu) *C.GtkMenu                              { return C.toGMenu(p.GWidget) }
-func MENU_BAR(p *MenuBar) *C.GtkMenuBar                    { return C.toGMenuBar(p.GWidget) }
-func MENU_SHELL(p *Menu) *C.GtkMenuShell                   { return C.toGMenuShell(p.GWidget) } // TODO (GtkMenuShell receiver)
-func MENU_BAR_SHELL(p *MenuBar) *C.GtkMenuShell            { return C.toGMenuShell(p.GWidget) } // TODO
-func MENU_ITEM(p *MenuItem) *C.GtkMenuItem                 { return C.toGMenuItem(p.GWidget) }
-func ITEM(p *Item) *C.GtkItem                              { return C.toGItem(p.GWidget) }
-func TOOLBAR(p *Toolbar) *C.GtkToolbar                     { return C.toGToolbar(p.GWidget) }
-func TOOL_ITEM(p *ToolItem) *C.GtkToolItem                 { return C.toGToolItem(p.GWidget) }
+
+//func COMBO_BOX_TEXT(p *ComboBoxText) *C.GtkComboBoxText    { return C.toGComboBoxText(p.GWidget) }
+func ACCESSIBLE(p *Accessible) *C.GtkAccessible        { return C.toGAccessible(unsafe.Pointer(p.Object)) }
+func BIN(p *Bin) *C.GtkBin                             { return C.toGBin(p.GWidget) }
+func STATUSBAR(p *Statusbar) *C.GtkStatusbar           { return C.toGStatusbar(p.GWidget) }
+func INFO_BAR(p *InfoBar) *C.GtkInfoBar                { return C.toGInfoBar(p.GWidget) }
+func FRAME(p *Frame) *C.GtkFrame                       { return C.toGFrame(p.GWidget) }
+func BOX(p *Box) *C.GtkBox                             { return C.toGBox(p.GWidget) }
+func PANED(p *Paned) *C.GtkPaned                       { return C.toGPaned(p.GWidget) }
+func TOGGLE_BUTTON(p *ToggleButton) *C.GtkToggleButton { return C.toGToggleButton(p.GWidget) }
+func ACCEL_LABEL(p *AccelLabel) *C.GtkAccelLabel       { return C.toGAccelLabel(p.GWidget) }
+func SCALEBUTTON(p *ScaleButton) *C.GtkScaleButton     { return C.toGScaleButton(p.GWidget) }
+func STYLE(p *Style) *C.GtkStyle                       { return p.GStyle }
+func ENTRY(p *Entry) *C.GtkEntry                       { return C.toGEntry(p.GWidget) }
+func ADJUSTMENT(p *Adjustment) *C.GtkAdjustment        { return p.GAdjustment }
+func TEXT_VIEW(p *TextView) *C.GtkTextView             { return C.toGTextView(p.GWidget) }
+func TEXT_BUFFER(p unsafe.Pointer) *C.GtkTextBuffer    { return C.toGTextBuffer(p) }
+func MENU(p *Menu) *C.GtkMenu                          { return C.toGMenu(p.GWidget) }
+func MENU_BAR(p *MenuBar) *C.GtkMenuBar                { return C.toGMenuBar(p.GWidget) }
+func MENU_SHELL(p *Menu) *C.GtkMenuShell               { return C.toGMenuShell(p.GWidget) } // TODO (GtkMenuShell receiver)
+func MENU_BAR_SHELL(p *MenuBar) *C.GtkMenuShell        { return C.toGMenuShell(p.GWidget) } // TODO
+func MENU_ITEM(p *MenuItem) *C.GtkMenuItem             { return C.toGMenuItem(p.GWidget) }
+func ITEM(p *Item) *C.GtkItem                          { return C.toGItem(p.GWidget) }
+func TOOLBAR(p *Toolbar) *C.GtkToolbar                 { return C.toGToolbar(p.GWidget) }
+func TOOL_ITEM(p *ToolItem) *C.GtkToolItem             { return C.toGToolItem(p.GWidget) }
 func SEPARATOR_TOOL_ITEM(p *SeparatorToolItem) *C.GtkSeparatorToolItem {
 	return C.toGSeparatorToolItem(p.GWidget)
 }
@@ -5308,7 +5309,7 @@ func (v *ComboBox) GetFocusOnClick() bool {
 //-----------------------------------------------------------------------
 // GtkComboBoxText
 //-----------------------------------------------------------------------
-type ComboBoxText struct {
+/*type ComboBoxText struct {
 	ComboBox
 }
 
@@ -5339,7 +5340,7 @@ func (v *ComboBoxText) Remove(position int) {
 func (v *ComboBoxText) GetActiveText() string {
 	return gostring(C._gtk_combo_box_text_get_active_text(COMBO_BOX_TEXT(v)))
 }
-
+*/
 //-----------------------------------------------------------------------
 // GtkComboBoxEntry
 //-----------------------------------------------------------------------
@@ -9330,6 +9331,12 @@ func (v *Widget) QueueResizeNoRedraw() {
 // gtk_widget_get_child_requisition
 // gtk_widget_size_allocate
 
+func (v *Widget) SizeRequest() (width, height int) {
+	req := C.GtkRequisition{}
+	C.gtk_widget_size_request(v.GWidget, &req)
+	return int(req.width), int(req.height)
+}
+
 func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods gdk.ModifierType, flags AccelFlags) {
 	csignal := C.CString(signal)
 	defer cfree(csignal)
@@ -9526,12 +9533,10 @@ func (v *Widget) GetSettings() *Settings {
 // gtk_widget_get_screen
 // gtk_widget_has_screen
 
-//TODO go can have multiple return, adapt the function!
-func (v *Widget) GetSizeRequest(width *int, height *int) {
+func (v *Widget) GetSizeRequest() (width, height int) {
 	var w, h C.gint
 	C.gtk_widget_get_size_request(v.GWidget, &w, &h)
-	*width = int(w)
-	*height = int(h)
+	return int(w), int(h)
 }
 func (v *Widget) SetChildVisible(setting bool) {
 	C.gtk_widget_set_child_visible(v.GWidget, gbool(setting))
