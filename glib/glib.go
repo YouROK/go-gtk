@@ -322,6 +322,9 @@ func (v List) Nth(n uint) *List {
 func (v List) NthData(n uint) interface{} {
 	return C.g_list_nth_data(v.GList, C.guint(n))
 }
+func (v List) NthCData(n uint) C.gpointer {
+	return C.g_list_nth_data(v.GList, C.guint(n))
+}
 func (v List) NthPrev(n uint) *List {
 	return &List{C.g_list_nth_prev(v.GList, C.guint(n))}
 }
