@@ -533,10 +533,12 @@ func (v *GObject) Set(name string, value interface{}) {
 			C._g_object_set_ptr(C.gpointer(v.Object), C.to_gcharptr(ptr), unsafe.Pointer(pv))
 		} else {
 			av := reflect.ValueOf(value)
-			if av.CanAddr() {
-				C._g_object_set_addr(C.gpointer(v.Object), C.to_gcharptr(ptr), unsafe.Pointer(reflect.ValueOf(value).UnsafeAddr()))
+			if av.Kind() == reflect.Ptr {
+				C._g_object_set_ptr(C.gpointer(v.Object), C.to_gcharptr(ptr), unsafe.Pointer(av.Pointer()))
+			} else if av.CanAddr() {
+				C._g_object_set_addr(C.gpointer(v.Object), C.to_gcharptr(ptr), unsafe.Pointer(av.UnsafeAddr()))
 			} else {
-				C._g_object_set_ptr(C.gpointer(v.Object), C.to_gcharptr(ptr), value.(unsafe.Pointer))
+				C._g_object_set_addr(C.gpointer(v.Object), C.to_gcharptr(ptr), unsafe.Pointer(&value))
 			}
 		}
 	}
@@ -660,7 +662,7 @@ type WrappedObject interface {
 // a void * pointer.  Where you might have wanted to do that, you can
 // instead just use func () { ... using data } to pass the data in.
 type CallbackContext struct {
-	f      interface{}
+	f      reflect.Value
 	cbi    unsafe.Pointer
 	target reflect.Value
 	data   reflect.Value
@@ -687,13 +689,12 @@ func (c CallbackArg) ToString() string {
 //export _go_glib_callback
 func _go_glib_callback(cbi *C.callback_info) {
 	context := callback_contexts[int(cbi.func_no)]
-	rf := reflect.ValueOf(context.f)
-	t := rf.Type()
+	t := context.f.Type()
 	fargs := make([]reflect.Value, t.NumIn())
 	if len(fargs) > 0 {
 		fargs[0] = reflect.ValueOf(context)
 	}
-	ret := rf.Call(fargs)
+	ret := context.f.Call(fargs)
 	if len(ret) > 0 {
 		bret, _ := ret[0].Interface().(bool)
 		cbi.ret = gbool(bret)
@@ -708,7 +709,7 @@ func (v *GObject) Connect(s string, f interface{}, datas ...interface{}) int {
 	if len(datas) > 0 {
 		data = datas[0]
 	}
-	ctx := &CallbackContext{f, nil, reflect.ValueOf(v), reflect.ValueOf(data)}
+	ctx := &CallbackContext{reflect.ValueOf(f), nil, reflect.ValueOf(v), reflect.ValueOf(data)}
 	ptr := C.CString(s)
 	defer C.free_string(ptr)
 	ctx.cbi = unsafe.Pointer(C._g_signal_connect(unsafe.Pointer(v.Object), C.to_gcharptr(ptr), C.int(len(callback_contexts))))
@@ -811,7 +812,7 @@ func (v *GMainLoop) GetContext() *GMainContext {
 }
 
 type SourcefuncContext struct {
-	f    interface{}
+	f    reflect.Value
 	sfi  unsafe.Pointer
 	data reflect.Value
 }
@@ -819,13 +820,12 @@ type SourcefuncContext struct {
 //export _go_glib_sourcefunc
 func _go_glib_sourcefunc(sfi *C.sourcefunc_info) {
 	context := sourcefunc_contexts[int(sfi.func_no)]
-	rf := reflect.ValueOf(context.f)
-	t := rf.Type()
+	t := context.f.Type()
 	fargs := make([]reflect.Value, t.NumIn())
 	if len(fargs) > 0 {
 		fargs[0] = reflect.ValueOf(context.data)
 	}
-	ret := rf.Call(fargs)
+	ret := context.f.Call(fargs)
 	if len(ret) > 0 {
 		bret, _ := ret[0].Interface().(bool)
 		sfi.ret = gbool(bret)
@@ -837,7 +837,7 @@ func IdleAdd(f interface{}, datas ...interface{}) {
 	if len(datas) > 0 {
 		data = datas[0]
 	}
-	ctx := &SourcefuncContext{f, nil, reflect.ValueOf(data)}
+	ctx := &SourcefuncContext{reflect.ValueOf(f), nil, reflect.ValueOf(data)}
 	ctx.sfi = unsafe.Pointer(C._g_idle_add(C.int(len(sourcefunc_contexts))))
 	sourcefunc_contexts = append(sourcefunc_contexts, ctx)
 }
@@ -847,7 +847,7 @@ func TimeoutAdd(interval uint, f interface{}, datas ...interface{}) {
 	if len(datas) > 0 {
 		data = datas[0]
 	}
-	ctx := &SourcefuncContext{f, nil, reflect.ValueOf(data)}
+	ctx := &SourcefuncContext{reflect.ValueOf(f), nil, reflect.ValueOf(data)}
 	ctx.sfi = unsafe.Pointer(C._g_timeout_add(C.guint(interval), C.int(len(sourcefunc_contexts))))
 	sourcefunc_contexts = append(sourcefunc_contexts, ctx)
 }

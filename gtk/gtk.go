@@ -3678,13 +3678,20 @@ func (v *TextBuffer) GetIterAtChildAnchor(i *TextIter, a *TextChildAnchor) {
 	C.gtk_text_buffer_get_iter_at_child_anchor(v.GTextBuffer, &i.GTextIter, a.GTextChildAnchor)
 }
 func (v *TextBuffer) GetStartIter(iter *TextIter) {
-	C.gtk_text_buffer_get_start_iter(v.GTextBuffer, &iter.GTextIter)
+	var i C.GtkTextIter
+	C.gtk_text_buffer_get_start_iter(v.GTextBuffer, &i)
+	iter.GTextIter = i
 }
 func (v *TextBuffer) GetEndIter(iter *TextIter) {
-	C.gtk_text_buffer_get_end_iter(v.GTextBuffer, &iter.GTextIter)
+	var i C.GtkTextIter
+	C.gtk_text_buffer_get_end_iter(v.GTextBuffer, &i)
+	iter.GTextIter = i
 }
 func (v *TextBuffer) GetBounds(start *TextIter, end *TextIter) {
-	C.gtk_text_buffer_get_bounds(v.GTextBuffer, &start.GTextIter, &end.GTextIter)
+	var i1, i2 C.GtkTextIter
+	C.gtk_text_buffer_get_bounds(v.GTextBuffer, &i1, &i2)
+	start.GTextIter = i1
+	end.GTextIter = i2
 }
 func (v *TextBuffer) GetModified() bool {
 	return gobool(C.gtk_text_buffer_get_modified(v.GTextBuffer))
@@ -5013,7 +5020,9 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, a interface{}) {
 			C._gtk_list_store_set_ptr(v.GListStore, &iter.GTreeIter, gint(column), unsafe.Pointer(pv))
 		} else {
 			av := reflect.ValueOf(a)
-			if av.CanAddr() {
+			if av.Kind() == reflect.Ptr {
+				C._gtk_list_store_set_ptr(v.GListStore, &iter.GTreeIter, gint(column), unsafe.Pointer(av.Pointer()))
+			} else if av.CanAddr() {
 				C._gtk_list_store_set_addr(v.GListStore, &iter.GTreeIter, gint(column), unsafe.Pointer(av.UnsafeAddr()))
 			} else {
 				C._gtk_list_store_set_addr(v.GListStore, &iter.GTreeIter, gint(column), unsafe.Pointer(&a))
@@ -5110,7 +5119,9 @@ func (v *TreeStore) SetValue(iter *TreeIter, column int, a interface{}) {
 			C._gtk_tree_store_set_ptr(v.GTreeStore, &iter.GTreeIter, gint(column), unsafe.Pointer(pv))
 		} else {
 			av := reflect.ValueOf(a)
-			if av.CanAddr() {
+			if av.Kind() == reflect.Ptr {
+				C._gtk_tree_store_set_ptr(v.GTreeStore, &iter.GTreeIter, gint(column), unsafe.Pointer(av.Pointer()))
+			} else if av.CanAddr() {
 				C._gtk_tree_store_set_addr(v.GTreeStore, &iter.GTreeIter, gint(column), unsafe.Pointer(av.UnsafeAddr()))
 			} else {
 				C._gtk_tree_store_set_addr(v.GTreeStore, &iter.GTreeIter, gint(column), unsafe.Pointer(&a))
