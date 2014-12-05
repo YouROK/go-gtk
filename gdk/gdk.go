@@ -4,6 +4,7 @@ package gdk
 // #cgo pkg-config: gdk-2.0 gthread-2.0
 import "C"
 import "unsafe"
+import "github.com/YouROK/go-gtk/glib"
 
 func guint16(v uint16) C.guint16 { return C.guint16(v) }
 func gint(v int) C.gint          { return C.gint(v) }
@@ -44,6 +45,20 @@ func (s *Screen) GetMonitorGeometry(num int) *Rectangle {
 	var rect C.GdkRectangle
 	C.gdk_screen_get_monitor_geometry(s.GScreen, C.gint(num), &rect)
 	return &Rectangle{int(rect.x), int(rect.y), int(rect.width), int(rect.height)}
+}
+
+func (s *Screen) GetWindowStack() []*Window {
+	cglist := C.gdk_screen_get_window_stack(s.GScreen)
+	if cglist == nil {
+		return nil
+	}
+	glist := glib.ListFromNative(unsafe.Pointer(cglist))
+	l := glist.First()
+	var wndlist []*Window
+	for n := uint(0); n < l.Length(); n++ {
+		wndlist = append(wndlist, &Window{l.NthData(n).(*C.GdkWindow)})
+	}
+	return wndlist
 }
 
 //-----------------------------------------------------------------------
@@ -579,6 +594,35 @@ func (v *Window) Show() {
 func (v *Window) Raise() {
 	C.gdk_window_raise(v.GWindow)
 }
+
+func (v *Window) GetTypeHint() WindowTypeHint {
+	return WindowTypeHint(C.gdk_window_get_type_hint(v.GWindow))
+}
+
+//
+
+func (v *Window) GetChildren() []*Window {
+	lst := C.gdk_window_get_children(v.GWindow)
+	if lst == nil {
+		return nil
+	}
+	glst := glib.ListFromNative(unsafe.Pointer(lst))
+	defer glst.Free()
+	var wndlist []*Window
+	for n := uint(0); n < glst.Length(); n++ {
+		wndlist = append(wndlist, &Window{(*C.GdkWindow)(unsafe.Pointer(glst.NthCData(n)))})
+	}
+	return wndlist
+
+}
+
+//gdk_window_get_children
+
+func GetDefaultRootWindow() *Window {
+	return &Window{C.gdk_get_default_root_window()}
+}
+
+//gdk-get-default-root-window
 
 //-----------------------------------------------------------------------
 // GdkPixmap
